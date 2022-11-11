@@ -1,0 +1,114 @@
+-- 1. Visualizzare il nome di tutti i cinema presenti nella città di Lecce, 
+-- il nome della colonna data in output dovrà essere “Cinema a Lecce”.
+SELECT Nome as "Cinema a Lecce"
+FROM CINEMA 
+WHERE Citta = "Lecce"
+
+-- 2. Visualizzare il nome di tutti gli attori il cui nome inizia con la lettera C.
+SELECT Nome
+FROM ATTORE
+WHERE Nome LIKE "C%"
+
+
+-- 3. Visualizzare il titolo dei film diretti da Dario Argento o da Ferzan Ozpetek.
+SELECT Titolo
+FROM FILM
+WHERE CognomeRegista = "Argento"
+OR CognomeRegista = "Ozpetek"
+
+-- 4. Visualizzare il titolo dei film di Dario Argento prodotti dopo il 1985.
+SELECT Titolo
+FROM FILM
+WHERE AnnoProduzione > 1985 
+AND CognomeRegista = "Argento"
+
+
+-- 5. Visualizzare i cinema presenti nella città di Bari con più di 500 posti in sala.
+SELECT CINEMA.Nome
+FROM CINEMA
+WHERE CINEMA.Posti > 500
+AND CINEMA.Citta = "Bari"
+
+-- 6. Visualizzare le attrici italiane nate dopo il 1970.
+SELECT ATTORE.Nome, ATTORE.Cognome
+FROM ATTORE
+WHERE ATTORE.Sesso = "F"
+AND ATTORE.AnnoNascita > 1970
+
+
+-- 7. Visualizzare CodiceCinema, Nome, Città e NumeroPosti. Il numero di posti dato in output, 
+-- per motivi legati al covid deve essere dimezzato.
+SELECT CINEMA.Citta, CINEMA.CodiceCinema, CINEMA.Nome, CINEMA.Posti/2 as numeroPosti
+FROM CINEMA
+
+-- 8. Visualizzare il titolo e il regista dei film gialli  prodotti in Italia o in America.
+SELECT FILM.Titolo, FILM.CognomeRegista
+FROM FILM
+WHERE FILM.Genere = "Giallo"
+AND (FILM.LuogoProduzione = "USA"
+OR film.LuogoProduzione = "ITA")
+
+-- 9. Visualizzare il titolo e il regista dei film gialli prodotti in Italia o in America dopo il 2000.
+SELECT FILM.Titolo, FILM.CognomeRegista
+FROM FILM
+WHERE FILM.Genere = "Giallo"
+AND FILM.AnnoProduzione > 2000
+AND (FILM.LuogoProduzione = "USA"
+OR film.LuogoProduzione = "ITA")
+
+
+-- 10.Visualizzare il titolo dei film gialli italiani prodotti dopo il 2000 oppure tedeschi.
+SELECT FILM.Titolo
+FROM FILM
+WHERE FILM.Genere = "Giallo"
+OR FILM.LuogoProduzione = "GER"
+
+-- 11. Visualizzare il titolo e il genere dei film proiettati il giorno di capodanno 2008.
+SELECT FILM.Titolo, FILM.Genere
+FROM FILM, PROGRAMMATO
+WHERE PROGRAMMATO.DataProiezione LIKE "%01-01-2008%"
+AND FILM.CodiceFilm = PROGRAMMATO.CodiceFilm
+
+-- 12. Visualizzare i film che hanno incassato più di 10.000 Euro
+SELECT FILM.Titolo
+FROM FILM, PROGRAMMATO
+WHERE PROGRAMMATO.Incasso > 10000
+AND PROGRAMMATO.CodiceFilm = FILM.CodiceFilm
+
+-- 13. Visualizzare, per ogni film in cui recita Madonna, il titolo del film e il personaggio interpretato.
+SELECT INTERPRETA.Personaggio, FILM.Titolo
+FROM INTERPRETA, FILM, ATTORE
+WHERE ATTORE.Nome = "Madonna"
+AND INTERPRETA.CodiceAttore = ATTORE.CodiceAttore
+AND FILM.CodiceFilm = INTERPRETA.CodiceFilm
+
+-- 14. Visualizzare tutti i film che non sono mai stati proiettati, ordinare il risultato in base al titolo del film.
+SELECT *
+FROM FILM LEFT JOIN PROGRAMMATO ON PROGRAMMATO.CodiceFilm = FILM.CodiceFilm
+WHERE PROGRAMMATO.DataProiezione IS NULL
+ORDER BY FILM.Titolo
+
+-- 15. Visualizzare tutti i film per i quali l’anno di produzione è compreso tra 2015 e 2022.
+SELECT *
+FROM FILM
+WHERE FILM.AnnoProduzione > 2015
+AND FILM.AnnoProduzione < 2022
+
+-- 16. Visualizzare tutti i film per i quali il genere è Drammatico, Avventura o Azione.
+SELECT *
+FROM FILM
+WHERE FILM.Genere = "Drammatico" 
+OR FILM.Genere = "Avventura"
+OR FILM.Genere = "Azione"
+
+-- 17. Visualizzare il prodotto cartesiano tra la tabella FILM e la tabella PROGRAMMATO. 
+SELECT * 
+FROM FILM CROSS JOIN PROGRAMMATO 
+
+
+-- 18. Visualizzare l’elenco di tutti gli attori e dei relativi film a cui ha partecipato. 
+-- (il risultato dovrà contenere i campi: Nome Attore, Cognome Attore, Titolo Film. Se l’attore non 
+-- ha partecipato ad alcun film deve essere comunque visualizzato nel risultato.
+SELECT ATTORE.Nome as "Nome attore", ATTORE.Cognome as "Cognome attore", FILM.Titolo as "Titolo Film"
+FROM ATTORE left JOIN INTERPRETA on ATTORE.CodiceAttore = INTERPRETA.CodiceAttore 
+LEFT JOIN FILM on INTERPRETA.CodiceFilm = FILM.CodiceFilm
