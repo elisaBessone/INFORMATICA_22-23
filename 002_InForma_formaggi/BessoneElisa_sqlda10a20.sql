@@ -76,3 +76,21 @@ FROM SEDEB, RESPONSABILI
 WHERE RESPONSABILI.cognome = "Lerda"
 AND RESPONSABILI.nome = "Ivo"
 AND RESPONSABILI.codResp = SEDEB.codResp)
+
+
+-- Query: restituisce gli stipendi degli operai che hanno uno stipendio > media 
+SELECT SEDEA.codOperaio
+FROM SEDEA
+WHERE stipendio > (SELECT avg(SEDEA.stipendio) FROM SEDEA)
+
+
+-- tutti i dipendenti che hanno un responsabile diverso da lerva ivo
+SELECT *
+FROM SEDEA, (SELECT RESPONSABILI.codResp FROM RESPONSABILI WHERE RESPONSABILI.nome != "Ivo" AND RESPONSABILI.cognome != "Lerda") as R
+WHERE SEDEA.codResp == R.codResp
+ 
+ -- tutti i dipendenti che hanno un responsabile diverso da lerva ivo con utilizzo di NOT IN 
+SELECT *
+FROM SEDEA
+WHERE SEDEA.codResp NOT IN (SELECT RESPONSABILI.codResp FROM RESPONSABILI WHERE RESPONSABILI.nome = "Ivo" AND RESPONSABILI.cognome = "Lerda") 
+

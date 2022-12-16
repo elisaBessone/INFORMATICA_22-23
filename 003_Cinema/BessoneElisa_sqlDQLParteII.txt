@@ -66,13 +66,20 @@ AND PROGRAMMATO.CodiceFilm = FILM.CodiceFilm
 
 
 -- Query 11 Restituire i titoli dei film il cui incasso totale supera i 5 milioni di euro.
-"""
-SELECT FILM.Titolo, count(FILM.CodiceFilm), sum(PROGRAMMATO.Incasso) as "Incasso_totale"
+SELECT FILM.Titolo, count(FILM.CodiceFilm)
 FROM FILM, PROGRAMMATO
-WHERE PROGRAMMATO.CodiceFilm = FILM.CodiceFilm
+WHERE (SELECT sum(PROGRAMMATO.Incasso) FROM PROGRAMMATO WHERE PROGRAMMATO.CodiceFilm = FILM.CodiceFilm) > 50000
 GROUP BY PROGRAMMATO.CodiceFilm
-"""
 
--- Query 12
+-- Query 12 Per i film in programmazione, visualizzare il numero di attori nati tra il 1970 e il 1980 (utilizzare il between).
+SELECT count(ATTORE.CodiceAttore) as "Numero attori nati tra 1970 e 1980"
+FROM ATTORE, (SELECT INTERPRETA.CodiceAttore FROM INTERPRETA, PROGRAMMATO WHERE PROGRAMMATO.CodiceFilm = INTERPRETA.CodiceFilm) as I
+WHERE I.CodiceAttore = ATTORE.CodiceAttore
 
+
+-- Query film in cui recita Favino
+SELECT FILM.Titolo
+FROM FILM, (SELECT ATTORE.CodiceAttore FROM ATTORE WHERE ATTORE.Cognome = "Favino")as A, (SELECT INTERPRETA.CodiceAttore, INTERPRETA.CodiceFilm FROM INTERPRETA) as I
+WHERE FILM.CodiceFilm = I.CodiceFilm
+AND A.CodiceAttore = I.CodiceAttore 
 
