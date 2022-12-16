@@ -1,0 +1,20 @@
+-- query 1:
+-- USANDO IN / NOT IN
+SELECT Titolo
+FROM FILM
+WHERE CodiceFilm IN (SELECT CodiceFilm FROM ATTORE, INTERPRETA WHERE ATTORE.CodiceAttore = INTERPRETA.CodiceAttore AND ATTORE.Nome = "Brad" AND ATTORE.Cognome = "Pitt") 
+AND CodiceFilm IN (SELECT CodiceFilm FROM ATTORE, INTERPRETA WHERE ATTORE.CodiceAttore = INTERPRETA.CodiceAttore AND ATTORE.Nome = "Leonardo" AND ATTORE.Cognome = "Di Caprio") 
+
+-- USANDO EXIST / NOT EXIST
+SELECT *
+FROM FILM
+WHERE EXISTS (SELECT * FROM ATTORE, INTERPRETA WHERE ATTORE.CodiceAttore = INTERPRETA.CodiceAttore AND ATTORE.Nome = "Brad" AND ATTORE.Cognome = "Pitt" 
+				AND FILM.CodiceFilm = INTERPRETA.CodiceFilm) 
+AND EXISTS (SELECT * FROM ATTORE, INTERPRETA WHERE ATTORE.CodiceAttore = INTERPRETA.CodiceAttore AND ATTORE.Nome = "Leonardo" AND ATTORE.Cognome = "Di Caprio" 
+			AND FILM.CodiceFilm = INTERPRETA.CodiceFilm) 
+
+
+-- query2 film che non sono mai stati proiettati a Bologna
+SELECT *
+FROM FILM
+WHERE NOT EXISTS(SELECT * FROM PROGRAMMATO, CINEMA WHERE PROGRAMMATO.CodiceCinema = CINEMA.CodiceCinema AND CINEMA.Citta = "Bologna")
