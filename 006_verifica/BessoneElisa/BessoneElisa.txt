@@ -1,0 +1,95 @@
+-- Restituire l'elenco in ordine alfabetico dei vestiti (nome, prezzo, quantita) con una quantità sul
+-- sito superiore o uguale a 3 pezzi.
+SELECT PRODOTTI.nome, PRODOTTI.prezzo, PRODOTTI.quantita
+FROM PRODOTTI
+WHERE PRODOTTI.quantita >= 3
+ORDER BY nome
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Restituire il "numero_prodotti" e il "totale_euro" dei prodotti venduti nella città di Cuneo.
+
+SELECT sum(PRODOTTI.quantita) as "numero_prodotti", sum(PRODOTTI.prezzo) as "totale_euro"
+FROM PRODOTTI, VENDITORI
+WHERE PRODOTTI.venditore == VENDITORI.id_venditore AND VENDITORI.citta == "Cuneo"
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Restituire l'elenco delle singole Categorie con i totali dei prezzi dei prodotti a loro assegnati al di
+-- sopra dei 1.000 euro. PRECISO: il totale deve essere sopra i 1.000 euro, non il prezzo dei singoli
+-- prodotti
+
+SELECT (PRODOTTI.prezzo * PRODOTTI.quantita) as "Prezzo totale prodotto", CATEGORIE.categoria, PRODOTTI.id_prodotto
+FROM CATEGORIE, PRODOTTI
+WHERE CATEGORIE.id_categoria = PRODOTTI.categoria
+AND "Prezzo totale prodotto" > 1000
+--GROUP BY CATEGORIE.categoria
+GROUP BY PRODOTTI.id_prodotto
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--Sapendo che la commissione è fissa per “elettronica”, restituire l'elenco dei prodotti (nome,
+--prezzo, quantita) con in aggiunta la colonna “Commissioni”(preso da tabella) e “Prezzo
+--Totale”(calcolato prezzo + commissioni) dei prodotti venduti da “Red PC”
+
+SELECT PRODOTTI.nome, PRODOTTI.prezzo, PRODOTTI.quantita, COMMISSIONI.commissione, (PRODOTTI.prezzo + COMMISSIONI.valore) as "prezzo totale"
+FROM PRODOTTI, COMMISSIONI, CATEGORIE
+WHERE COMMISSIONI.id_commissione = CATEGORIE.commissione
+AND PRODOTTI.categoria = CATEGORIE.id_categoria
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE "CATEGORIE" (
+	"id_categoria"	INTEGER NOT NULL UNIQUE,
+	"categoria"	TEXT NOT NULL,
+	"commissione"	INTEGER NOT NULL,
+	PRIMARY KEY("id_categoria" AUTOINCREMENT)
+);
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE "COMMISSIONI" (
+	"id_commissione"	INTEGER NOT NULL UNIQUE,
+	"commissione"	TEXT NOT NULL,
+	"tipo"	TEXT NOT NULL,
+	"valore"	INTEGER NOT NULL
+);
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE "PRODOTTI" (
+	"id_prodotto"	INTEGER NOT NULL UNIQUE,
+	"nome"	TEXT NOT NULL UNIQUE,
+	"colore"	TEXT,
+	"taglia"	INTEGER,
+	"quantita"	INTEGER NOT NULL,
+	"prezzo"	REAL NOT NULL,
+	"spedizione"	TEXT NOT NULL,
+	"venditore"	INTEGER NOT NULL,
+	"categoria"	INTEGER NOT NULL,
+	PRIMARY KEY("id_prodotto","nome")
+);
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE "VENDITORI" (
+	"id_venditore"	INTEGER NOT NULL UNIQUE,
+	"codiceFiscale"	TEXT NOT NULL UNIQUE,
+	"nome"	TEXT NOT NULL,
+	"citta"	TEXT NOT NULL,
+	"tipo"	TEXT NOT NULL,
+	PRIMARY KEY("id_venditore" AUTOINCREMENT)
+);
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+CHIAVI ESTERNE
+venditore punta a id_venditore e viceversa
+categoria punta a id_categoria e viceversa
+CATEGORIE.commissione punta a id_commissione
+
+
+
+
+
