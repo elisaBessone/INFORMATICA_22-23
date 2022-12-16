@@ -1,0 +1,8 @@
+CREATE TABLE AZIENDA(
+    CodAzienda INT AUTO_INCREMENT NOT NULL,
+    RagioneSociale CHAR(30) NOT NULL,
+    Fatturato INT NOT NULL DEFAULT 1000000,
+    NumDipendenti INT NOT NULL,
+    PRIMARY KEY(CodAzienda),
+    CHECK(NumDipendenti < 20 AND NumDipendenti > 5)
+)
